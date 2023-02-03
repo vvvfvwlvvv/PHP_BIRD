@@ -1,3 +1,3 @@
-<?php
-
-// todo Написать шапку сайта: html, head, body, меню, подключение css
+<script src="static/js/script.js"></script>
+</body>
+</html>

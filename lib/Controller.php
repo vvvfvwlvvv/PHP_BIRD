@@ -15,26 +15,39 @@ class Controller
      */
     public function process(): void
     {
-        $page = '';
-
-        switch ($page) {
-            case 'form':
-                $result = $this->formAction();
-                break;
-            case 'list':
-                $result = $this->listAction();
-                break;
-            case 'send':
-                $result = $this->sendAction();
-                break;
-            default:
-                header('Location: /form');
-                $result = null;
+        
+        $page = str_replace('/', '', $_SERVER['REQUEST_URI']);
+        $httpMethod = $_SERVER['REQUEST_METHOD'];
+        
+        if ($httpMethod === "GET") {
+            switch ($page) {
+                case 'form':
+                    $result = $this->formAction();
+                    break;
+                case 'list':
+                    $result = $this->listAction();
+                    break;
+                default:
+                    header('Location: /form');
+                    $result = null;
+            }
+        }
+        else {
+            switch ($page) {
+                case 'send':
+                    $result = $this->sendAction();
+                    break;
+                default:
+                    header('Location: /form');
+                    $result = null;
+            }
         }
 
         if (!is_null($result)) {
             echo $result;
         }
+        
+    
     }
 
     /**
@@ -45,7 +58,12 @@ class Controller
      * @return string
      */
     protected function formAction(): string {
+        $var = "";
+        require_once './template/header.php';
+        require_once './template/form.php';
+        require_once './template/footer.php';
 
+        return '';
     }
 
     /**
@@ -57,7 +75,19 @@ class Controller
      */
     protected function listAction(): string
     {
-        // селект из базы $database->query()
+        $createTableSql = <<<SQL
+        SELECT * FROM form
+        SQL;
+        try {
+            $database = new Database();
+            $result = $database->query($createTableSql);
+        } catch (\Throwable $throwable) {
+            
+        }
+
+        while ($row = $result->fetchArray()) {
+        var_dump($row);}
+        return '';
     }
 
     /**
@@ -69,6 +99,23 @@ class Controller
      */
     protected function sendAction(): string
     {
-        // запись в базу $database->query()
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+        $createTableSql = <<<SQL
+        INSERT INTO form (name_person, email_person, link_person) VALUES ('{$data['name']}', '{$data['email']}', '{$data['link']}')
+SQL;
+        
+
+        try {
+            $database = new Database();
+            $database->query($createTableSql);
+        } catch (\Throwable $throwable) {
+           $result = ['error' => 'database error'];
+           return json_encode($result);
+        }
+
+        
+
+        return $json;
     }
 }

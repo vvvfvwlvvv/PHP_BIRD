@@ -7,7 +7,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class DatabaseInitCommand extends \Symfony\Component\Console\Command\Command
+class DatabaseInitCommand extends Command
 {
     protected function configure()
     {
@@ -18,8 +18,8 @@ class DatabaseInitCommand extends \Symfony\Component\Console\Command\Command
     }
 
     /**
-     * @param \Symfony\Component\Console\Input\InputInterface $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param InputInterface $input
+     * @param OutputInterface $output
      * @return int
      *
      * todo Написать запрос для создания таблицы
@@ -27,6 +27,12 @@ class DatabaseInitCommand extends \Symfony\Component\Console\Command\Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $createTableSql = <<<SQL
+        create table form (
+            id INTEGER primary key AUTOINCREMENT NOT NULL,
+            name_person varchar(70),
+            email_person varchar(100),
+            link_person varchar(400)
+        );
 
 SQL;
 
